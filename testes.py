@@ -58,3 +58,37 @@ def run():
     if not cap.isOpened():
         print("Não consegui abrir a câmera!")
         exit()
+
+    angle = 0
+
+    while True:
+        ret, frame = cap.read()
+
+        if not ret:
+            print("Não consegui capturar frame!")
+            break
+
+        frame = cv.resize(frame, (320, 240), interpolation=cv.INTER_AREA)
+
+        image = np.array(frame).astype(float) / 255
+
+        image2 = rotate_image(image, angle)
+        filtro = np.array([[0, 0, 0], [0, 1, 0], [0, 0, 0]])
+        image2 = cv.filter2D(image2, -1, filtro)
+
+        cv.imshow('frame', image2)
+
+        angle += np.pi / 50.0
+
+        if angle > 2 * np.pi:
+            angle -= 2 * np.pi
+
+        if cv.waitKey(1) == ord('q'):
+            break
+
+    cap.release()
+    cv.destroyAllWindows()
+
+
+if __name__ == "__main__":
+    run()
