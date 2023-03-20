@@ -1,7 +1,6 @@
 import numpy as np
 import cv2 as cv
 
-
 def criar_indices(min_i, max_i, min_j, max_j):
     import itertools
     L = list(itertools.product(range(min_i, max_i), range(min_j, max_j)))
@@ -9,7 +8,6 @@ def criar_indices(min_i, max_i, min_j, max_j):
     idx_j = np.array([e[1] for e in L])
     idx = np.vstack((idx_i, idx_j))
     return idx
-
 
 def rotate_image(image, angle):
     width = image.shape[1]
@@ -41,18 +39,18 @@ def rotate_image(image, angle):
 
     # Only copy the values for the valid indices
     image2[Xd[1, valid_indices], Xd[0, valid_indices], :] = image[X[1, valid_indices], X[0, valid_indices], :]
+
     return image2
 
 
 def run():
     cap = cv.VideoCapture(0)
 
-    width = 320
-    height = 240
-
     if not cap.isOpened():
         print("Não consegui abrir a câmera!")
         exit()
+
+    angle = 0
 
     while True:
         ret, frame = cap.read()
@@ -61,22 +59,21 @@ def run():
             print("Não consegui capturar frame!")
             break
 
-        frame = cv.resize(frame, (width, height), interpolation=cv.INTER_AREA)
+        frame = cv.resize(frame, (320, 240), interpolation=cv.INTER_AREA)
 
         image = np.array(frame).astype(float) / 255
 
-        center = (width / 2, height / 2)
-        angle = -45
-        scale = 1
+        image2 = rotate_image(image, angle)
 
-        # Compute rotation matrix
-        M = cv.getRotationMatrix2D(center, angle, scale)
-
-        # Apply rotation to image
-        image2 = cv.warpAffine(image, M, (width, height), flags=cv.INTER_LINEAR, borderMode=cv.BORDER_CONSTANT,
-                               borderValue=(0, 0, 0))
+        filtro = np.array([[0, 0, 0], [0, 1, 0], [0, 0, 0]])
+        image2 = cv.filter2D(image2, -1, filtro)
 
         cv.imshow('frame', image2)
+
+        angle += np.pi / 50.0
+
+        if angle > 2 * np.pi:
+            angle -= 2 * np.pi
 
         if cv.waitKey(1) == ord('q'):
             break
@@ -85,4 +82,5 @@ def run():
     cv.destroyAllWindows()
 
 
-run()
+if __name__ == "__main__":
+    run()

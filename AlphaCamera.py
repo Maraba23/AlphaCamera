@@ -1,6 +1,4 @@
 import numpy as np
-
-# Instalar a biblioteca cv2 pode ser um pouco demorado. Não deixe para ultima hora!
 import cv2 as cv
 
 def criar_indices(min_i, max_i, min_j, max_j):
@@ -8,7 +6,7 @@ def criar_indices(min_i, max_i, min_j, max_j):
     L = list(itertools.product(range(min_i, max_i), range(min_j, max_j)))
     idx_i = np.array([e[0] for e in L])
     idx_j = np.array([e[1] for e in L])
-    idx = np.vstack( (idx_i, idx_j) )
+    idx = np.vstack((idx_i, idx_j))
     return idx
 
 def rotate_image(image, angle):
@@ -41,6 +39,7 @@ def rotate_image(image, angle):
 
     # Only copy the values for the valid indices
     image2[Xd[1, valid_indices], Xd[0, valid_indices], :] = image[X[1, valid_indices], X[0, valid_indices], :]
+
     return image2
 
 
@@ -66,6 +65,9 @@ def run():
 
         image2 = rotate_image(image, angle)
 
+        filtro = np.array([[0, 0, 0], [0, 1, 0], [0, 0, 0]])
+        image2 = cv.filter2D(image2, -1, filtro)
+
         cv.imshow('frame', image2)
 
         angle += np.pi / 50.0
@@ -79,4 +81,6 @@ def run():
     cap.release()
     cv.destroyAllWindows()
 
-run()
+
+if __name__ == "__main__":
+    run()
