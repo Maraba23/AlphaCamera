@@ -37,9 +37,17 @@ A nova imagem é retornada pela função rotate_image e exibida na tela usando a
 Por fim, o programa é encerrado quando o usuário pressiona a tecla "q". A câmera é liberada e todas as janelas abertas são fechadas usando a função destroyAllWindows da biblioteca OpenCV.
 ## Running Tests
 
+Primeiro, instale as dependências do projeto.
+
+```bash
+  pip install -r requirements.txt
+```
+
 Para rodar, apenes execute o arquivo Alpha Camera ou execute no terminal
 
 ```bash
   python AlphaCamera.py
 ```
+
+Para finalizar o programa, pressione a tecla "q".
 
