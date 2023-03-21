@@ -22,19 +22,58 @@ O código em questão é um exemplo de como rotacionar uma imagem em torno do se
 
 A imagem é representada por uma matriz de pixels, onde cada pixel contém informações sobre a cor e a posição daquele ponto na imagem. A posição dos pixels é determinada por suas coordenadas no sistema de coordenadas cartesiano. A coordenada (0,0) é o canto superior esquerdo da imagem e as coordenadas aumentam em direção ao canto inferior direito.
 
-Para rotacionar a imagem, é necessário aplicar três transformações sucessivas: translação, rotação e translação inversa. Primeiro, a imagem é movida para que seu centro coincida com a origem. Em seguida, a imagem é rotacionada em torno da origem. Finalmente, a imagem é movida de volta para sua posição original.
+Usamos então uma matriz $X_{i,j}$ onde $x_{i,j}$ é i-ésima cordenada do j-ésimo pixel da imagem.
 
-A translação é realizada por meio da adição ou subtração de um valor constante em todas as coordenadas da imagem. A rotação é realizada por meio de uma matriz de rotação que multiplica as coordenadas da imagem. A translação inversa é realizada por meio da adição ou subtração de um valor constante em todas as coordenadas da imagem novamente.
+Para rotacionar a imagem, é necessário aplicar três transformações sucessivas: translação, rotação e translação inversa. Primeiro, a imagem é movida para que seu centro coincida com a origem.
 
-O código começa inicializando a câmera, capturando um quadro de vídeo e redimensionando-o para uma resolução menor. Em seguida, a imagem é normalizada para que os valores dos pixels fiquem no intervalo [0,1] em vez de [0,255]. Isso é feito dividindo cada valor de pixel por 255.
+Para isso usamos a matriz:
 
-Depois disso, a função rotate_image é chamada, recebendo a imagem e um ângulo de rotação como parâmetros. A função cria uma matriz de coordenadas usando a função criar_indices, que retorna uma matriz com as coordenadas x e y de todos os pixels da imagem. Essa matriz é usada para calcular as novas coordenadas dos pixels após a rotação.
+$$
+T = \begin{bmatrix}
+1 & 0 & -width/2 \\
+0 & 1 & -height/2 \\
+0 & 0 & 1
+\end{bmatrix}
+$$
 
-A matriz de coordenadas é então transformada usando a matriz de translação, matriz de rotação e matriz de translação inversa. As matrizes de transformação são criadas usando funções da biblioteca numpy, que é uma biblioteca de computação científica para Python. A matriz resultante é então usada para mapear os pixels da imagem original para as suas novas posições na imagem rotacionada.
+Com isso conseguimos chegar na origem da imagem tirando a metade da largura e da altura da imagem.
 
-A nova imagem é retornada pela função rotate_image e exibida na tela usando a função imshow da biblioteca OpenCV. O ângulo de rotação é aumentado a cada quadro para que a imagem continue girando em torno de seu centro.
+Em seguida, a imagem é rotacionada em torno da origem.
 
-Por fim, o programa é encerrado quando o usuário pressiona a tecla "q". A câmera é liberada e todas as janelas abertas são fechadas usando a função destroyAllWindows da biblioteca OpenCV.
+Para isso usamos a matriz:
+
+$$
+R = \begin{bmatrix}
+\cos(\theta) & -\sin(\theta) & 0 \\
+\sin(\theta) & \cos(\theta) & 0 \\
+0 & 0 & 1
+\end{bmatrix}
+$$
+
+onde $\theta$ eh sempre atualizado para que a imagem continue girando em torno do seu centro.
+ 
+Finalmente, a imagem é movida de volta para sua posição original.
+
+Usando a matriz:
+$$
+T2 = \begin{bmatrix}
+1 & 0 & width/2 \\
+0 & 1 & height/2 \\
+0 & 0 & 1
+\end{bmatrix}
+$$
+
+Em suma, jogamos nossa imagem para o ponto (0,0) e a rotacionamos em torno do ponto (0,0), e depois a movemos de volta para o ponto (width/2, height/2), que é o centro da imagem.
+
+Para isso são realizadas as seguintes operações:
+```python
+Xd = T @ X # Translada a imagem para a origem
+Xd = R @ Xd # Rotaciona a imagem em torno da origem
+Xd = T2 @ Xd # Translada a imagem de volta para o centro
+```
+
+Em seguida clipamos a matriz Xd para não ficar com pixels fora da imagem original.
+
 ## Running Tests
 
 Primeiro, instale as dependências do projeto.
