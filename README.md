@@ -55,8 +55,9 @@ onde $\theta$ eh sempre atualizado para que a imagem continue girando em torno d
 Finalmente, a imagem é movida de volta para sua posição original.
 
 Usando a matriz:
+
 $$
-T2 = \begin{bmatrix}
+T_{2} = \begin{bmatrix}
 1 & 0 & width/2 \\
 0 & 1 & height/2 \\
 0 & 0 & 1
